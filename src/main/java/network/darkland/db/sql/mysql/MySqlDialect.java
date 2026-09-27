@@ -1,12 +1,14 @@
 package network.darkland.db.sql.mysql;
 
+import network.darkland.db.StorageColumn;
+import network.darkland.db.StorageType;
 import network.darkland.db.sql.SqlDialect;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * MySQL / MariaDB specific SQL fragments. This is the only place MySQL syntax appears —
+ * MySQL specific SQL fragments. This is the only place MySQL syntax appears —
  * {@link network.darkland.db.sql.SqlRepository} contains all the actual query orchestration.
  */
 public final class MySqlDialect implements SqlDialect {
@@ -25,40 +27,46 @@ public final class MySqlDialect implements SqlDialect {
     }
 
     @Override
-    public String jsonColumnType() {
-        return "JSON";
+    public String quote(String identifier) {
+        return "`" + identifier + "`";
     }
 
     @Override
-    public String createTableSql(String table) {
-        return "CREATE TABLE IF NOT EXISTS `" + table + "` ("
-                + "id_key VARCHAR(191) NOT NULL PRIMARY KEY, "
-                + "data " + jsonColumnType() + " NOT NULL"
-                + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    public String idColumnType() {
+        return "VARCHAR(191)";
     }
 
     @Override
-    public String upsertSql(String table) {
-        return "INSERT INTO `" + table + "` (id_key, data) VALUES (?, CAST(? AS JSON)) "
-                + "ON DUPLICATE KEY UPDATE data = VALUES(data)";
+    public String columnType(StorageType type) {
+        return switch (type) {
+            case TEXT    -> "TEXT";
+            case INT     -> "INT";
+            case LONG    -> "BIGINT";
+            case DOUBLE  -> "DOUBLE";
+            case BOOLEAN -> "BOOLEAN";
+            case JSON    -> "JSON";
+        };
     }
 
     @Override
-    public String numericFieldExpression(String jsonColumn, String fieldName) {
-        return "CAST(JSON_UNQUOTE(JSON_EXTRACT(`" + jsonColumn + "`, '$." + fieldName + "')) AS DECIMAL(30,6))";
-    }
-
-    private String createIndexSql(String table, String indexName, String fieldName) {
-        return "CREATE INDEX `" + indexName + "` ON `" + table + "` ((" + numericFieldExpression("data", fieldName) + "))";
+    public String tableOptions() {
+        return " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
     }
 
     @Override
-    public java.util.List<String> createIndexStatements(String table, String indexName, String fieldName) {
-        return java.util.List.of(createIndexSql(table, indexName, fieldName));
+    public String upsertSql(String table, StorageColumn id, List<StorageColumn> columns) {
+        String updates = columns.isEmpty()
+                ? quote(id.name()) + " = " + quote(id.name())
+                : columns.stream()
+                        .map(c -> quote(c.name()) + " = VALUES(" + quote(c.name()) + ")")
+                        .collect(Collectors.joining(", "));
+        return "INSERT INTO " + quote(table) + " (" + columnList(id, columns) + ") VALUES ("
+                + placeholders(columns.size() + 1) + ") ON DUPLICATE KEY UPDATE " + updates;
     }
 
     @Override
-    public void bindJson(PreparedStatement ps, int index, String json) throws SQLException {
-        ps.setString(index, json);
+    public List<String> createIndexStatements(String table, String indexName, String column) {
+        // MySQL has no CREATE INDEX IF NOT EXISTS; a duplicate index is reported and ignored.
+        return List.of("CREATE INDEX " + quote(indexName) + " ON " + quote(table) + " (" + quote(column) + ")");
     }
 }
