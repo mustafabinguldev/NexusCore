@@ -1,8 +1,11 @@
 package network.darkland.db.sql.sqlite;
 
+import network.darkland.db.StorageColumn;
+import network.darkland.db.StorageType;
 import network.darkland.db.sql.SqlDialect;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class SqliteDialect implements SqlDialect {
 
@@ -22,33 +25,33 @@ public final class SqliteDialect implements SqlDialect {
     }
 
     @Override
-    public String jsonColumnType() {
+    public String quote(String identifier) {
+        return "\"" + identifier + "\"";
+    }
+
+    @Override
+    public String idColumnType() {
         return "TEXT";
     }
 
     @Override
-    public String createTableSql(String table) {
-        return "CREATE TABLE IF NOT EXISTS \"" + table + "\" ("
-                + "id_key TEXT PRIMARY KEY, "
-                + "data " + jsonColumnType() + " NOT NULL"
-                + ")";
+    public String columnType(StorageType type) {
+        return switch (type) {
+            case TEXT, JSON     -> "TEXT";
+            case INT, LONG      -> "INTEGER";
+            case DOUBLE         -> "REAL";
+            case BOOLEAN        -> "BOOLEAN";
+        };
     }
 
     @Override
-    public String upsertSql(String table) {
-        return "INSERT INTO \"" + table + "\" (id_key, data) VALUES (?, ?) "
-                + "ON CONFLICT(id_key) DO UPDATE SET data = excluded.data";
-    }
-
-    @Override
-    public String numericFieldExpression(String jsonColumn, String fieldName) {
-        return "CAST(json_extract(" + jsonColumn + ", '$." + fieldName + "') AS REAL)";
-    }
-
-    @Override
-    public List<String> createIndexStatements(String table, String indexName, String fieldName) {
-        String sql = "CREATE INDEX IF NOT EXISTS \"" + indexName + "\" ON \"" + table + "\" ("
-                + numericFieldExpression("data", fieldName) + ")";
-        return List.of(sql);
+    public String upsertSql(String table, StorageColumn id, List<StorageColumn> columns) {
+        String conflict = columns.isEmpty()
+                ? "DO NOTHING"
+                : "DO UPDATE SET " + columns.stream()
+                        .map(c -> quote(c.name()) + " = excluded." + quote(c.name()))
+                        .collect(Collectors.joining(", "));
+        return "INSERT INTO " + quote(table) + " (" + columnList(id, columns) + ") VALUES ("
+                + placeholders(columns.size() + 1) + ") ON CONFLICT(" + quote(id.name()) + ") " + conflict;
     }
 }

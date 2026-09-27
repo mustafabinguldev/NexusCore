@@ -9,6 +9,8 @@ import network.darkland.cache.CacheMetrics;
 import network.darkland.Influxdb.annotations.NexusMetric;
 import network.darkland.Influxdb.annotations.NexusMetricConfig;
 import network.darkland.NexusApplication;
+import network.darkland.db.StorageColumn;
+import network.darkland.db.StorageType;
 import network.darkland.model.DataModel;
 import network.darkland.protocol.backup.annotations.DbDataModels;
 import network.darkland.protocol.handlers.GetDataHandler;
@@ -299,6 +301,18 @@ public abstract class DataAddon {
             return null;
         }
     }
+
+    /**
+     * Top-level fields of this model, used by relational stores to lay the data out as
+     * a regular table (one column per field) instead of a single JSON document.
+     */
+    public List<StorageColumn> storageColumns() {
+        return Arrays.stream(getAnnotatedFields())
+                .map(f -> new StorageColumn(f.getName(), StorageType.fromJavaType(f.getType()),
+                        f.getAnnotation(DbDataModels.class).isId()))
+                .toList();
+    }
+
     public String getIdFieldName() {
         if (cachedIdFieldName != null) return cachedIdFieldName;
         synchronized (idCacheLock) {

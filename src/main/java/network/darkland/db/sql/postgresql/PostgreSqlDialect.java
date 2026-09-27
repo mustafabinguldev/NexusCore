@@ -1,10 +1,14 @@
 package network.darkland.db.sql.postgresql;
 
+import network.darkland.db.StorageColumn;
+import network.darkland.db.StorageType;
 import network.darkland.db.sql.SqlDialect;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class PostgreSqlDialect implements SqlDialect {
 
@@ -20,41 +24,47 @@ public final class PostgreSqlDialect implements SqlDialect {
     }
 
     @Override
-    public String jsonColumnType() {
-        return "JSONB";
+    public String quote(String identifier) {
+        return "\"" + identifier + "\"";
     }
 
     @Override
-    public String createTableSql(String table) {
-        return "CREATE TABLE IF NOT EXISTS \"" + table + "\" ("
-                + "id_key VARCHAR(255) PRIMARY KEY, "
-                + "data " + jsonColumnType() + " NOT NULL"
-                + ")";
+    public String idColumnType() {
+        return "VARCHAR(255)";
     }
 
     @Override
-    public String upsertSql(String table) {
-        return "INSERT INTO \"" + table + "\" (id_key, data) VALUES (?, ?::jsonb) "
-                + "ON CONFLICT (id_key) DO UPDATE SET data = EXCLUDED.data";
+    public String columnType(StorageType type) {
+        return switch (type) {
+            case TEXT    -> "TEXT";
+            case INT     -> "INTEGER";
+            case LONG    -> "BIGINT";
+            case DOUBLE  -> "DOUBLE PRECISION";
+            case BOOLEAN -> "BOOLEAN";
+            case JSON    -> "JSONB";
+        };
     }
 
     @Override
-    public String numericFieldExpression(String jsonColumn, String fieldName) {
-        return "((" + jsonColumn + "->>'" + fieldName + "')::numeric)";
-    }
-
-    private String createIndexSql(String table, String indexName, String fieldName) {
-        return "CREATE INDEX IF NOT EXISTS \"" + indexName + "\" ON \"" + table + "\" ("
-                + numericFieldExpression("data", fieldName) + ")";
+    public String addColumnSql(String table, StorageColumn column) {
+        return "ALTER TABLE " + quote(table) + " ADD COLUMN IF NOT EXISTS " + quote(column.name())
+                + " " + columnType(column.type());
     }
 
     @Override
-    public java.util.List<String> createIndexStatements(String table, String indexName, String fieldName) {
-        return java.util.List.of(createIndexSql(table, indexName, fieldName));
+    public String upsertSql(String table, StorageColumn id, List<StorageColumn> columns) {
+        String conflict = columns.isEmpty()
+                ? "DO NOTHING"
+                : "DO UPDATE SET " + columns.stream()
+                        .map(c -> quote(c.name()) + " = EXCLUDED." + quote(c.name()))
+                        .collect(Collectors.joining(", "));
+        return "INSERT INTO " + quote(table) + " (" + columnList(id, columns) + ") VALUES ("
+                + placeholders(columns.size() + 1) + ") ON CONFLICT (" + quote(id.name()) + ") " + conflict;
     }
 
     @Override
     public void bindJson(PreparedStatement ps, int index, String json) throws SQLException {
-        ps.setObject(index, json, Types.OTHER);
+        if (json == null) ps.setNull(index, Types.OTHER);
+        else ps.setObject(index, json, Types.OTHER);
     }
 }

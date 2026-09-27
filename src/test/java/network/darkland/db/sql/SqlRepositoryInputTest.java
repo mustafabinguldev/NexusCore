@@ -42,9 +42,9 @@ class SqlRepositoryInputTest {
     }
 
     @Test
-    void rankingRowsAreReturnedAsObjectsInsteadOfEscapedJsonStrings() {
-        Object value = SqlRepository.parseJsonData("{\"score\":42}");
-        assertInstanceOf(java.util.Map.class, value);
-        assertEquals(42, ((java.util.Map<?, ?>) value).get("score"));
+    void keysGetTheirDeclaredTypeBack() {
+        assertTrue(SqlRepository.idValue("42", network.darkland.db.StorageType.LONG).isNumber());
+        assertEquals("abc", SqlRepository.idValue("abc", network.darkland.db.StorageType.TEXT).asText());
+        assertTrue(SqlRepository.idValue("not-a-number", network.darkland.db.StorageType.INT).isTextual());
     }
 }

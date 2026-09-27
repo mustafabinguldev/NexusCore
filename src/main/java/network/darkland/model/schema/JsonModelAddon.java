@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import network.darkland.NexusApplication;
+import network.darkland.db.StorageColumn;
+import network.darkland.db.StorageType;
 import network.darkland.protocol.DataAddon;
 import network.darkland.protocol.NexusJsonDataContainer;
 import network.darkland.protocol.RequestType;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -77,6 +80,24 @@ public class JsonModelAddon extends DataAddon {
     @Override
     public Class<?> getIdClassName() {
         return definition.idField().kind().javaType();
+    }
+
+    @Override
+    public List<StorageColumn> storageColumns() {
+        return definition.root().fields().values().stream()
+                .map(field -> new StorageColumn(field.name(), storageType(field.kind()), field.isId()))
+                .toList();
+    }
+
+    private static StorageType storageType(FieldKind kind) {
+        return switch (kind) {
+            case STRING  -> StorageType.TEXT;
+            case INT     -> StorageType.INT;
+            case LONG    -> StorageType.LONG;
+            case DOUBLE  -> StorageType.DOUBLE;
+            case BOOLEAN -> StorageType.BOOLEAN;
+            case OBJECT, LIST, MAP, ANY -> StorageType.JSON;
+        };
     }
 
     // ---------------------------------------------------------------- requests
