@@ -4,7 +4,7 @@
 
 Nexus Core centralizes player and game data behind Redis messaging. Server plugins send requests; Core handles caching, pluggable persistence (MongoDB, MySQL, MariaDB, PostgreSQL, Microsoft SQL Server, or SQLite), and responses through a common addon API.
 
-[Quick start](#quick-start) · [Addons](#create-an-addon) · [JSON models](#models-without-code) · [Protocol](#messaging) · [Architecture](docs/ARCHITECTURE.md) · [Tests](diagnostics/README.md) · [Roadmap](ROADMAP.md)
+[Quick start](#quick-start) · [Addons](#create-an-addon) · [JSON models](#models-without-code) · [Protocol](#messaging) · [Architecture](docs/ARCHITECTURE.md) · [Spigot client](#client-libraries) · [Tests](diagnostics/README.md) · [Roadmap](ROADMAP.md)
 
 ## What it provides
 
@@ -22,6 +22,32 @@ Nexus Core centralizes player and game data behind Redis messaging. Server plugi
 ![Nexus Core architecture](docs/images/architecture.svg)
 
 A request goes from `XADD` to `XACK` in eight steps. Dirty keys are flushed to the database before the stream entry is acknowledged. The full walkthrough, including the request lifecycle, cache tiers, delivery guarantees, and Redis names, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Client libraries
+
+| Platform | Library | Requirements |
+| --- | --- | --- |
+| Spigot / Paper (1.13+) | [NexusCore-Spigot](https://github.com/mustafabinguldev/NexusCore-Spigot) | Java 17+, the same Redis and `NEXUS_SIGNING_KEY` as Core |
+
+NexusCore-Spigot is a plugin that connects a Minecraft server to Core. Other plugins on the server use its typed API: `getData`, `setData`, `increment`, `remove`, `ranking`, and `rankPosition`. It signs every packet, and while Core is down it queues writes and sends them once Core is back. It also provides typed Pub/Sub channels between servers.
+
+Add it as a `provided` dependency from GitHub Packages, then declare `depend: [ NexusCore-Spigot ]` in your `plugin.yml`:
+
+```xml
+<repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/mustafabinguldev/NexusCore-Spigot</url>
+</repository>
+
+<dependency>
+    <groupId>io.github.mustafabinguldev</groupId>
+    <artifactId>nexuscore-spigot</artifactId>
+    <version>1.0.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+The client's protocol id and field names must match the Java addon or JSON model registered on Core. Setup and API examples are in the [NexusCore-Spigot README](https://github.com/mustafabinguldev/NexusCore-Spigot#readme).
 
 ## Quick start
 
