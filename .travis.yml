@@ -1,0 +1,17 @@
+os: linux
+dist: noble
+language: minimal
+
+services:
+  - docker
+
+script:
+  - >
+    docker run --rm
+    -v "$PWD:/workspace"
+    -w /workspace
+    maven:3.9.16-eclipse-temurin-26-noble
+    mvn -B -ntp verify
+
+notifications:
+  email: false
