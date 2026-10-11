@@ -4,7 +4,7 @@
 
 Nexus Core centralizes player and game data behind Redis messaging. Server plugins send requests; Core handles caching, pluggable persistence (MongoDB, MySQL, MariaDB, PostgreSQL, Microsoft SQL Server, or SQLite), and responses through a common addon API.
 
-[Quick start](#quick-start) · [Addons](#create-an-addon) · [JSON models](#models-without-code) · [Protocol](#messaging) · [Tests](diagnostics/README.md) · [Roadmap](ROADMAP.md)
+[Quick start](#quick-start) · [Addons](#create-an-addon) · [JSON models](#models-without-code) · [Protocol](#messaging) · [Architecture](docs/ARCHITECTURE.md) · [Tests](diagnostics/README.md) · [Roadmap](ROADMAP.md)
 
 ## What it provides
 
@@ -17,12 +17,11 @@ Nexus Core centralizes player and game data behind Redis messaging. Server plugi
 - **Web dashboard:** authenticated access to statistics, addons, and cached values.
 - **Optional metrics:** InfluxDB integration and cache hit statistics.
 
-```text
-Servers → Redis Stream → Nexus Core → Database (MongoDB / MySQL / MariaDB / PostgreSQL / MSSQL / SQLite)
-                                      ↕
-                                 L1 / Redis cache
-Servers ← Redis Pub/Sub ← Nexus Core
-```
+## Architecture
+
+![Nexus Core architecture](docs/images/architecture.svg)
+
+A request goes from `XADD` to `XACK` in eight steps. Dirty keys are flushed to the database before the stream entry is acknowledged. The full walkthrough, including the request lifecycle, cache tiers, delivery guarantees, and Redis names, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Quick start
 

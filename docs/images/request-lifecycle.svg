@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1040" width="1600" height="1040" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a58a6ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#58a6ff"/></marker>
+    <marker id="aff7b72" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff7b72"/></marker>
+    <marker id="ad2a8ff" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d2a8ff"/></marker>
+    <marker id="a3fb950" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3fb950"/></marker>
+    <marker id="ae3b341" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e3b341"/></marker>
+    <style>.t{fill:#e6edf3;font-size:14px;font-weight:600}.s{fill:#8b949e;font-size:12px}.ml{fill:#e6edf3;font-size:12.5px;font-family:Consolas,Menlo,monospace;paint-order:stroke;stroke:#0d1117;stroke-width:5px;stroke-linejoin:round}.mu{fill:#8b949e;font-size:11px;paint-order:stroke;stroke:#0d1117;stroke-width:5px;stroke-linejoin:round}.n{font-size:11px;font-weight:700;text-anchor:middle}</style>
+  </defs>
+  <rect width="1600" height="1040" fill="#0d1117"/>
+  <text x="30" y="50" fill="#e6edf3" font-size="26" font-weight="700">Nexus Core — Request lifecycle</text>
+  <text x="30" y="76" class="s" font-size="14">One stream entry from XADD to XACK. Writes reach the database before the entry is acknowledged.</text>
+  <line x1="110" y1="162" x2="110" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="15" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="15" y="104" width="190" height="4" rx="2" fill="#58a6ff"/>
+  <text x="110" y="131" class="t" text-anchor="middle">Game server</text>
+  <text x="110" y="150" class="s" text-anchor="middle">plugin / service</text>
+  <line x1="330" y1="162" x2="330" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="235" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="235" y="104" width="190" height="4" rx="2" fill="#ff7b72"/>
+  <text x="330" y="131" class="t" text-anchor="middle">Redis</text>
+  <text x="330" y="150" class="s" text-anchor="middle">stream · receipts · pub/sub</text>
+  <line x1="550" y1="162" x2="550" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="455" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="455" y="104" width="190" height="4" rx="2" fill="#ff7b72"/>
+  <text x="550" y="131" class="t" text-anchor="middle">Inbound worker</text>
+  <text x="550" y="150" class="s" text-anchor="middle">RedisManager</text>
+  <line x1="770" y1="162" x2="770" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="675" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="675" y="104" width="190" height="4" rx="2" fill="#d2a8ff"/>
+  <text x="770" y="131" class="t" text-anchor="middle">Validation chain</text>
+  <text x="770" y="150" class="s" text-anchor="middle">NexusReceiver</text>
+  <line x1="990" y1="162" x2="990" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="895" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="895" y="104" width="190" height="4" rx="2" fill="#58a6ff"/>
+  <text x="990" y="131" class="t" text-anchor="middle">DataAddon</text>
+  <text x="990" y="150" class="s" text-anchor="middle">RequestHandler</text>
+  <line x1="1210" y1="162" x2="1210" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="1115" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="1115" y="104" width="190" height="4" rx="2" fill="#3fb950"/>
+  <text x="1210" y="131" class="t" text-anchor="middle">Cache</text>
+  <text x="1210" y="150" class="s" text-anchor="middle">L1 Caffeine · L2 Redis</text>
+  <line x1="1430" y1="162" x2="1430" y2="900" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 5"/>
+  <rect x="1335" y="104" width="190" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <rect x="1335" y="104" width="190" height="4" rx="2" fill="#e3b341"/>
+  <text x="1430" y="131" class="t" text-anchor="middle">DataStore</text>
+  <text x="1430" y="150" class="s" text-anchor="middle">Mongo / SQL engine</text>
+  <line x1="114" y1="210" x2="326" y2="210" stroke="#58a6ff" stroke-width="1.8" marker-end="url(#a58a6ff)"/>
+  <text x="220" y="201" class="ml" text-anchor="middle">XADD darkland_nexus_stream</text>
+  <text x="220" y="228" class="mu" text-anchor="middle">protocol · source · type · data · timestamp · nonce · sig</text>
+  <circle cx="92" cy="210" r="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/><text x="92" y="214" class="n" fill="#58a6ff">1</text>
+  <line x1="334" y1="270" x2="546" y2="270" stroke="#ff7b72" stroke-width="1.8" marker-end="url(#aff7b72)"/>
+  <text x="440" y="261" class="ml" text-anchor="middle">XREADGROUP nexus-core-group</text>
+  <text x="440" y="288" class="mu" text-anchor="middle">one worker per CPU core</text>
+  <circle cx="312" cy="270" r="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/><text x="312" y="274" class="n" fill="#ff7b72">2</text>
+  <line x1="554" y1="330" x2="766" y2="330" stroke="#d2a8ff" stroke-width="1.8" marker-end="url(#ad2a8ff)"/>
+  <text x="660" y="321" class="ml" text-anchor="middle">run validation chain</text>
+  <text x="660" y="348" class="mu" text-anchor="middle">HMAC signature · 5-min timestamp · nonce</text>
+  <circle cx="532" cy="330" r="10" fill="#0d1117" stroke="#d2a8ff" stroke-width="1.5"/><text x="532" y="334" class="n" fill="#d2a8ff">3</text>
+  <line x1="546" y1="390" x2="334" y2="390" stroke="#ff7b72" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#aff7b72)"/>
+  <text x="440" y="381" class="ml" text-anchor="middle">receipt validated:</text>
+  <circle cx="568" cy="390" r="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/><text x="568" y="394" class="n" fill="#ff7b72">4</text>
+  <line x1="774" y1="450" x2="986" y2="450" stroke="#58a6ff" stroke-width="1.8" marker-end="url(#a58a6ff)"/>
+  <text x="880" y="441" class="ml" text-anchor="middle">getAddonById(protocol) → dispatch(type)</text>
+  <text x="880" y="468" class="mu" text-anchor="middle">addon-specific validation first</text>
+  <circle cx="752" cy="450" r="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/><text x="752" y="454" class="n" fill="#58a6ff">5</text>
+  <line x1="994" y1="510" x2="1206" y2="510" stroke="#3fb950" stroke-width="1.8" marker-end="url(#a3fb950)"/>
+  <text x="1100" y="501" class="ml" text-anchor="middle">withKeyLock → getData()</text>
+  <text x="1100" y="528" class="mu" text-anchor="middle">pending write → L1 → L2</text>
+  <circle cx="972" cy="510" r="10" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/><text x="972" y="514" class="n" fill="#3fb950">6</text>
+  <line x1="1214" y1="570" x2="1426" y2="570" stroke="#e3b341" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ae3b341)"/>
+  <text x="1320" y="561" class="ml" text-anchor="middle">getValue() on cache miss</text>
+  <text x="1320" y="588" class="mu" text-anchor="middle">L3 hit is cached back</text>
+  <circle cx="1192" cy="570" r="10" fill="#0d1117" stroke="#e3b341" stroke-width="1.5"/><text x="1192" y="574" class="n" fill="#e3b341">7</text>
+  <line x1="994" y1="630" x2="1206" y2="630" stroke="#3fb950" stroke-width="1.8" marker-end="url(#a3fb950)"/>
+  <text x="1100" y="621" class="ml" text-anchor="middle">write L1 + Redis · markDirty(key)</text>
+  <text x="1100" y="648" class="mu" text-anchor="middle">SET / INCREMENT / REMOVE</text>
+  <circle cx="972" cy="630" r="10" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/><text x="972" y="634" class="n" fill="#3fb950">8</text>
+  <line x1="986" y1="690" x2="334" y2="690" stroke="#ff7b72" stroke-width="1.8" marker-end="url(#aff7b72)"/>
+  <text x="660" y="681" class="ml" text-anchor="middle">PUBLISH darkland_nexus_&lt;source&gt;</text>
+  <text x="660" y="708" class="mu" text-anchor="middle">signed with MessageAuth.stamp()</text>
+  <circle cx="1008" cy="690" r="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/><text x="1008" y="694" class="n" fill="#ff7b72">9</text>
+  <line x1="326" y1="750" x2="114" y2="750" stroke="#ff7b72" stroke-width="1.8" marker-end="url(#aff7b72)"/>
+  <text x="220" y="741" class="ml" text-anchor="middle">response</text>
+  <text x="220" y="768" class="mu" text-anchor="middle">Pub/Sub · not durable</text>
+  <circle cx="348" cy="750" r="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/><text x="348" y="754" class="n" fill="#ff7b72">10</text>
+  <line x1="554" y1="810" x2="1426" y2="810" stroke="#e3b341" stroke-width="1.8" marker-end="url(#ae3b341)"/>
+  <text x="990" y="801" class="ml" text-anchor="middle">flushKey(dirty keys) → setValue()</text>
+  <text x="990" y="828" class="mu" text-anchor="middle">waits for every tracked task</text>
+  <circle cx="532" cy="810" r="10" fill="#0d1117" stroke="#e3b341" stroke-width="1.5"/><text x="532" y="814" class="n" fill="#e3b341">11</text>
+  <line x1="546" y1="870" x2="334" y2="870" stroke="#ff7b72" stroke-width="1.8" marker-end="url(#aff7b72)"/>
+  <text x="440" y="861" class="ml" text-anchor="middle">receipt done: · XACK</text>
+  <text x="440" y="888" class="mu" text-anchor="middle">entry leaves the pending list</text>
+  <circle cx="568" cy="870" r="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/><text x="568" y="874" class="n" fill="#ff7b72">12</text>
+  <rect x="30" y="925" width="1540" height="95" rx="10" fill="#161b22" stroke="#30363d"/>
+  <rect x="30" y="925" width="4" height="95" rx="2" fill="#ff7b72"/>
+  <text x="50" y="952" class="t">On failure</text>
+  <text x="50" y="976" class="s">Any exception before step 12 leaves the entry unacknowledged. The XAUTOCLAIM sweeper hands idle entries to a live worker, and delivery receipts skip work that already finished, so a flush retry never re-applies an increment.</text>
+  <text x="50" y="998" class="s">Delivery is at least once: a crash between a side effect and its done: receipt can still replay a mutation. Pub/Sub responses (step 9–10) are fire-and-forget.</text>
+</svg>

@@ -16,7 +16,7 @@
     <distributionManagement>
         <repository>
             <id>github-nexus-core</id>
-            <url>https://maven.pkg.github.com/mustafabinguldev/nexus-cache-orchestrator</url>
+            <url>https://maven.pkg.github.com/mustafabinguldev/nexuscore</url>
         </repository>
     </distributionManagement>
 

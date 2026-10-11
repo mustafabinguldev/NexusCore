@@ -46,3 +46,4 @@ build/
 cache-metrics.json
 addons.csv
 nexus-data.db
+.token-optimizer/
